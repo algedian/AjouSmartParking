@@ -1,3 +1,4 @@
+package smartparking;
 
 
 import java.io.IOException;
