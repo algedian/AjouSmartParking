@@ -32,7 +32,7 @@ public class ParkingLotList extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		RequestDispatcher rd = request.getRequestDispatcher("parkingLotList.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("parkinglotlist.jsp");
 		String latitude = (String)session.getAttribute("latitude");
 		String longitude = (String)session.getAttribute("longitude");
 		ArrayList<ParkingLot> list = LotListManager.getNearestLot(latitude, longitude);
