@@ -60,15 +60,17 @@ public class DB {
 		int lotID;
 		String latitude;
 		String longitude;
+		String name;
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID FROM parking_lot ;");
+			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID, parkingLotName FROM parking_lot ;");
 			while(rs.next()){
 				latitude = rs.getString(1);
 				longitude = rs.getString(2);
 				lotID = rs.getInt(3);
-				list.add(new ParkingLot(latitude, longitude, lotID));
+				name = rs.getString(4);
+				list.add(new ParkingLot(latitude, longitude, lotID, name));
 			}
 			rs.close();
 		}
