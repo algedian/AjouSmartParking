@@ -11,20 +11,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Smart Parking</title>
 </head>
+
 <body>
-
-
-<div class="row">
-	<div class="col-md-10">
 	<div class="jumbotron">
-	  <h1>Parking Helper</h1>
-	  <p>help parking</p>
-
-	  <p><%=link_to "Login",  welcome_login_path, class: "btn btn-primary btn-lg btn-block"%></p>
-	  <p><%=link_to "Sign up", welcome_signup_path, class: "btn btn-default btn-lg btn-block"%></p>
+		<h3>${name} 님 반갑습니다!</h3>	
+		
+		<h5>오늘도 좋은 하루 되세요!</h5>	
+		
+		<a href="/ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
+		
 	</div>
-	</div>
-</div>
-
 </body>
 </html>
