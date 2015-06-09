@@ -9,39 +9,42 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class DB {
-	public static String getUserPw(String id) throws SQLException, IOException {
+	public static User getUser(String phoneNum) throws SQLException, IOException {
 		Connection con = getConnection();
-		String pw = null;
+		User user = null;
 		try {
 			Statement st = con.createStatement();
-			
-			ResultSet rs = st.executeQuery("SELECT password FROM user WHERE user.ID='" + id + "';");			
-			while(rs.next())
-				pw = rs.getString(1);
+			ResultSet rs = st.executeQuery("SELECT name, userID FROM user WHERE user.userID='" + phoneNum + "';");			
+			while(rs.next()){
+				user = new User(rs.getString(1), rs.getString(2));
+			}
 			rs.close();
 		}
 		finally {
 			con.close();
 		}
-		return pw;
+		return user;
 	}
 	
-	public static boolean addUserInfo(String id, String pw) throws SQLException, IOException {
+	public static User addUser(String name, String userID) throws SQLException, IOException {
 		Connection con = getConnection();
-		boolean res = false;
+		User res = null;
 		try {
 			Statement st = con.createStatement();
-			String dbid = null;
+			String duplication = null;
 			
-			ResultSet rs = st.executeQuery("SELECT ID FROM user WHERE user.ID='" + id + "';");
+			ResultSet rs = st.executeQuery("SELECT userID FROM user WHERE user.userID='" + userID + "';");
 			while(rs.next())
-				dbid = rs.getString(1);
+				duplication = rs.getString(1);
 			
-			System.out.println("dbid : " + dbid);
-			if(dbid == null || dbid.equals("")){
-				st.executeUpdate("INSERT INTO user VALUES('" + id + "','" + pw + "')");
-				res = true;
+			
+			if(duplication == null){
+				st.executeUpdate("INSERT INTO user VALUES('" + name + "','" + userID + "')");
+				res = new User(name,userID);
+			}else{
+				System.out.println("Join Faild id("+userID+") is already exist");
 			}
+			
 			st.close();
 		}
 		finally {
@@ -50,21 +53,22 @@ public class DB {
 		return res;
 	}
 	
-	/*
-	public static ArrayList<MusicPair> getMusicNameList(String userID) throws SQLException, IOException {
+	
+	public static ArrayList<ParkingLot> getParkingLots() throws SQLException, IOException {
 		Connection con = getConnection();
-		ArrayList<MusicPair> list = new ArrayList<MusicPair>();
-		String str = null;
-		int id = 0;
+		ArrayList<ParkingLot> list = new ArrayList<ParkingLot>();
+		int lotID;
+		String latitude;
+		String longitude;
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT title, musicID FROM music WHERE music.userID='" + userID + "';");	//문법 확인	
+			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID FROM parking_lot ;");
 			while(rs.next()){
-				str = rs.getString(1);
-				id = rs.getInt(2);
-				list.add(new MusicPair(str, id));
-				//System.out.println("str : " + str + ", id : " + id);
+				latitude = rs.getString(1);
+				longitude = rs.getString(2);
+				lotID = rs.getInt(3);
+				list.add(new ParkingLot(latitude, longitude, lotID));
 			}
 			rs.close();
 		}
@@ -73,7 +77,7 @@ public class DB {
 		}
 		return list;
 	}
-	*/
+	
 	
 	public static String getMusicContent(String musicID) throws SQLException, IOException {
 		Connection con = getConnection();
@@ -107,11 +111,15 @@ public class DB {
 	}
 	
 	public static Connection getConnection() throws SQLException, IOException {
-		String drivers = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://localhost:3306/wmc?useUnicode=true&characterEncoding=UTF-8";
+		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";
 		String username = "root";
 		String password = "webclass";
-		System.setProperty("jdbc.drivers", drivers);
+		 try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return DriverManager.getConnection(url, username, password);
 	}
 	
