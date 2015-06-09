@@ -11,27 +11,30 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Smart Parking</title>
 </head>
+
 <body>
 
 <div class="row">
 	<div class="col-md-10">
 		<div class="jumbotron">
-			<form>
+			<form action="Join" method="post">
 			  <div class="form-group">
-			    <label for="exampleInputEmail1">ID</label>
-			    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter ID">
+			    <label for="nameInput">Name</label>
+			    <input type="text" class="form-control" id="nameInput" name="name" placeholder="Enter name">
 			  </div>
 			  <div class="form-group">
-			    <label for="exampleInputPassword1">Password</label>
-			    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+			    <label for="phoneNumInput">Phone Number</label>
+			    <input type="tel" class="form-control" id="phoneNumInput" name="userID" value="${phoneNum}" disabled>
 			  </div>
-			  <p><%=link_to "Login",  welcome_select_path, class: "btn btn-primary btn-lg btn-block"%></p>
+			  <div class="form-group">
+			    <label for="paymentInput">결재정보 나중에</label>
+			    <input type="text" class="form-control" id="paymaneInput" placeholder="paymentInput">
+			  </div>
+			  <input type="submit" value="Join" class="btn btn-primary btn-lg btn-block" >
 			</form>
 		</div>
 	</div>
 </div>
-
-
 
 </body>
 </html>
