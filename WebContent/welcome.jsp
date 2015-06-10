@@ -13,6 +13,8 @@
 </head>
 
 <body>
+
+<div class="container-fluid">	
 	<div class="jumbotron">
 		<h3>${name} ´Ô ¹Ý°©½À´Ï´Ù!</h3>	
 		
@@ -21,5 +23,6 @@
 		<a href="/ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
 		
 	</div>
+</div>
 </body>
 </html>

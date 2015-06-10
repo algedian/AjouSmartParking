@@ -8,7 +8,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>Smart Parking</title>
 </head>
+
 <body>
+
+<div class="container-fluid">	
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <% 
@@ -17,7 +20,7 @@
 		
 		for(int i=0 ; i<lotList.size() ; i++){
 		%>
-		<li class="list-group-item"><a href="LotDetail.jsp?lotID=<%=lotList.get(i).getLotID()%>" >
+		<li class="list-group-item"><a href="reservation.jsp?lotID=<%=lotList.get(i).getLotID()%>" >
 		<%=lotList.get(i).getName() %> </a></li>
 		
 		<%
@@ -25,5 +28,6 @@
 		%>
 	  </div>
 	</div>
+</div>
 </body>
 </html>
