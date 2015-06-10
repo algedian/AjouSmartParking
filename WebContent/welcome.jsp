@@ -16,11 +16,11 @@
 
 <div class="container-fluid">	
 	<div class="jumbotron">
-		<h3>${name} ¥‘ π›∞©Ω¿¥œ¥Ÿ!</h3>	
+		<h3>${user.name} ¥‘ π›∞©Ω¿¥œ¥Ÿ!</h3>	
 		
 		<h5>ø¿¥√µµ ¡¡¿∫ «œ∑Á µ«ººø‰!</h5>	
 		
-		<a href="/ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
+		<a href="ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
 		
 	</div>
 </div>

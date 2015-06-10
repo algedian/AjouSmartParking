@@ -41,6 +41,7 @@ public class Join extends HttpServlet {
 		String userID = request.getParameter("userID");
 		String name = request.getParameter("name");
 		User res = null;
+		System.out.println(userID + ";" + name);
 		try {
 			res = DB.addUser(name, userID);
 		} catch (SQLException e) {
@@ -50,11 +51,12 @@ public class Join extends HttpServlet {
 		}
 		if(res == null){
 			request.setAttribute("phoneNum", userID);
-			RequestDispatcher rd = request.getRequestDispatcher("join.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("/join.jsp");
 			rd.forward(request, response);
 		}else{
 			HttpSession session = request.getSession();
 			session.setAttribute("user", res);
+			response.sendRedirect("Welcome");
 		}
 	}
 

@@ -15,14 +15,16 @@
 
 <div class="container-fluid">
 	<div class="row">
-		<iframe src="https://www.google.com/maps/embed/v1/place?key=${googleAPIKey}&q=${latitude}%2C${longitude}"></iframe>
+		<div class="col-xs-12">
+			<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB4RKax8jdIYM7__cAMShZWDp3B9GZDiiQ&q=${lotLatitude}%2C${lotLongitude}"></iframe>
+		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6">
-		<a href="/ParkingLotList" class="btn btn-danger btn-lg btn-block" > Back </a>
+		<div class="col-xs-6">
+		<a href="ParkingLotList" class="btn btn-danger btn-lg btn-block" > Back </a>
 		</div>
-		<div class="col-md-6">
-		<a href="/Reservation?lotID=${lotID}" class="btn btn-success btn-lg btn-block" > Next </a>
+		<div class="col-xs-6">
+		<a href="Reservation?lotID=${lotID}" class="btn btn-success btn-lg btn-block" > Next </a>
 		</div>
 	</div>
 </div>

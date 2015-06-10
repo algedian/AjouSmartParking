@@ -42,6 +42,12 @@ public class LotListManager {
 			p.setDistance((int)calDistance(lat1,lon1,Double.parseDouble(p.getLatitude()),Double.parseDouble(p.getLongitude())));
 		}
 		ret.sort(new ParkingLotComparator());
-		return (ArrayList<ParkingLot>) ret.subList(0, Math.min(ret.size()-1,4));
+		
+		ArrayList<ParkingLot> sub = new ArrayList<ParkingLot>();
+		for(int i=0 ; i<Math.min(ret.size(),5) ; i++){
+			sub.add(ret.get(i));
+		}
+		
+		return sub; 
 	}
 }

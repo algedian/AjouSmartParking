@@ -80,6 +80,33 @@ public class DB {
 		return list;
 	}
 	
+	public static ParkingLot getLotInfo(String lotID) throws SQLException, IOException {
+		Connection con = getConnection();
+		ParkingLot lot = null;
+		int tmplotID;
+		String latitude;
+		String longitude;
+		String name;
+		try {
+			Statement st = con.createStatement();
+			
+			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID, parkingLotName FROM parking_lot "
+					+ "where parking_lot.parkingLotID='" + lotID + "';");
+			while(rs.next()){
+				latitude = rs.getString(1);
+				longitude = rs.getString(2);
+				tmplotID = rs.getInt(3);
+				name = rs.getString(4);
+				lot = new ParkingLot(latitude, longitude, tmplotID, name);
+			}
+			rs.close();
+		}
+		finally {
+			con.close();
+		}
+		return lot;
+	}
+	
 	
 	public static ArrayList<String> getParkingSpace(String lotID) throws SQLException, IOException {
 		Connection con = getConnection();
@@ -98,7 +125,8 @@ public class DB {
 		}
 		return ret;
 	}
-	//
+	
+	/*
 	public static void addMusicToServer(String userId, String title, String content) throws SQLException, IOException{
 		Connection con = getConnection();
 		
@@ -111,6 +139,7 @@ public class DB {
 		con.close();
 		
 	}
+	*/
 	
 	public static Connection getConnection() throws SQLException, IOException {
 		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";

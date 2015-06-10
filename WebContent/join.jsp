@@ -25,7 +25,7 @@
 				  </div>
 				  <div class="form-group">
 				    <label for="phoneNumInput">Phone Number</label>
-				    <input type="tel" class="form-control" id="phoneNumInput" name="userID" value="${phoneNum}" disabled>
+				    <input type="text" class="form-control" id="phoneNumInput" name="userID" value="${phoneNum}" readonly>
 				  </div>
 				  <div class="form-group">
 				    <label for="paymentInput">결재정보 나중에</label>
