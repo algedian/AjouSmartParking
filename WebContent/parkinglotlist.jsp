@@ -28,7 +28,7 @@
 			for(int i=0 ; i<lotList.size() ; i++){
 			%>
 			<li class="list-group-item"><a href="LotDetail?lotID=<%=lotList.get(i).getLotID()%>" >
-			<%=lotList.get(i).getName() %> 
+			<%=lotList.get(i).getName() %><span class="badge"><%=lotList.get(i).getValidSpace()%></span> 
 			<span class="pull-right"><%=lotList.get(i).getDistance()%>m</span></a></li>
 			
 			<%

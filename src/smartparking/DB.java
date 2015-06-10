@@ -75,6 +75,10 @@ public class DB {
 				name = rs.getString(4);
 				list.add(new ParkingLot(latitude, longitude, lotID, name));
 			}
+			for(ParkingLot pl : list){
+				rs = st.executeQuery("select count(*) from parking_space where parkingLotID="+pl.getLotID()+" and status='true';");
+				pl.setValidSpace(rs.getInt(1));
+			}
 			rs.close();
 		}
 		finally {
@@ -148,7 +152,7 @@ public class DB {
 	public static Connection getConnection() throws SQLException, IOException {
 		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";
 		String username = "root";
-		String password = "webclass";
+		String password = "asdf1234";
 		 try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {

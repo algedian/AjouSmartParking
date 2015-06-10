@@ -6,6 +6,7 @@ public class ParkingLot {
 	private String name;
 	private int lotID;
 	private int distance;
+	private int validSpace;
 	
 	public ParkingLot(String latitude, String longitude, int lotID, String name){
 		this.latitude = latitude;
@@ -13,6 +14,7 @@ public class ParkingLot {
 		this.lotID = lotID;
 		this.name = name;
 		distance = 0;
+		setValidSpace(0);
 	}
 	
 	public String getName(){
@@ -40,6 +42,14 @@ public class ParkingLot {
 
 	public void setDistance(int distance) {
 		this.distance = distance;
+	}
+
+	public int getValidSpace() {
+		return validSpace;
+	}
+
+	public void setValidSpace(int validSpace) {
+		this.validSpace = validSpace;
 	}
 	
 }

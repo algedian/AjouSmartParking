@@ -6,6 +6,7 @@
 	<script src="jquery-1.11.3.min.js"></script>
 	<script src="bootstrap.min.js"></script>
 	<link rel="stylesheet" href="bootstrap.min.css">
+	<link rel="stylesheet" href="mycss.css">
 	<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,16 +14,19 @@
 </head>
 
 <body>
-
-<div class="container-fluid">	
-	<div class="jumbotron">
-		<h3>${user.name} 님 반갑습니다!</h3>	
-		
-		<h5>오늘도 좋은 하루 되세요!</h5>	
-		
-		<a href="ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
-		
+<div class="outer">
+<div class="middle">
+	<div class="container-fluid">	
+		<div class="jumbotron">
+			<h3>${user.name} 님 반갑습니다!</h3>	
+			
+			<h5>오늘도 좋은 하루 되세요!</h5>	
+			
+			<a href="ParkingLotList" class="btn btn-success btn-lg btn-block" > Search Parking Lot </a> 		
+			
+		</div>
 	</div>
+</div>
 </div>
 </body>
 </html>
