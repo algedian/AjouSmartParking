@@ -81,24 +81,24 @@ public class DB {
 	}
 	
 	
-	public static String getMusicContent(String musicID) throws SQLException, IOException {
+	public static ArrayList<String> getParkingSpace(String lotID) throws SQLException, IOException {
 		Connection con = getConnection();
-		String content = null;
+		ArrayList<String> ret = new ArrayList<String>();
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT content FROM music "
-					+ "WHERE music.musicID='" + musicID + "';");			
-			while(rs.next())
-				content = rs.getString(1);
+			ResultSet rs = st.executeQuery("SELECT parkingSpaceID FROM parking_space WHERE parking_space.parkingLotID='" + lotID + "';");			
+			while(rs.next()){
+				ret.add(rs.getString(1));
+			}
 			rs.close();
 		}
 		finally {
 			con.close();
 		}
-		return content;
+		return ret;
 	}
-	
+	//
 	public static void addMusicToServer(String userId, String title, String content) throws SQLException, IOException{
 		Connection con = getConnection();
 		
