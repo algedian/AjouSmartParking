@@ -64,7 +64,10 @@ public class DB {
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID, parkingLotName FROM parking_lot ;");
+			ResultSet rs = st.executeQuery(
+					"select distinct latitude, longitude, parking_lot.parkingLotID, parking_lot.parkingLotName "
+					+ "from parking_lot,parking_space "
+					+ "where parking_space.parkingLotID=parking_lot.parkingLotID AND parking_space.status='true';");
 			while(rs.next()){
 				latitude = rs.getString(1);
 				longitude = rs.getString(2);
@@ -114,7 +117,8 @@ public class DB {
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT parkingSpaceID FROM parking_space WHERE parking_space.parkingLotID='" + lotID + "';");			
+			ResultSet rs = st.executeQuery("SELECT parkingSpaceID FROM parking_space "
+					+ "WHERE parking_space.parkingLotID='" + lotID + "';");			
 			while(rs.next()){
 				ret.add(rs.getString(1));
 			}
