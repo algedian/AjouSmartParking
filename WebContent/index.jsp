@@ -13,18 +13,20 @@
 </head>
 <body>
 
+<%@ include file="navbar.jsp" %>
 
-<div class="row">
-	<div class="col-md-10">
-	<div class="jumbotron">
-	  <h1>Parking Helper</h1>
-	  <p>help parking</p>
-
-	  <p><%=link_to "Login",  welcome_login_path, class: "btn btn-primary btn-lg btn-block"%></p>
-	  <p><%=link_to "Sign up", welcome_signup_path, class: "btn btn-default btn-lg btn-block"%></p>
-	</div>
+<div class="container-fluid">	
+	<div class="row">
+		<div class="col-md-10">
+			<div class="jumbotron">
+			  <h1>Parking Helper</h1>
+			  <p>help parking</p>
+		
+			  <p><a value="Login" href="login.jsp" class="btn btn-primary btn-lg btn-block"></a></p>
+			  <p><a value="Sign up" href="signup.jsp" class="btn btn-default btn-lg btn-block"></a></p>
+			</div>
+		</div>
 	</div>
 </div>
-
 </body>
 </html>

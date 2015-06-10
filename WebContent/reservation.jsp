@@ -13,57 +13,18 @@
 </head>
 <body>
 
-<div class="row">
-<div class="col-md-10">
-	<div class="panel panel-default">
-	  <div class="panel-body">
-	  	<p class="text-center">
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-	  			<%=link_to "1", "", class: "btn btn-danger"%>
-  		</p>
-  		<p class="text-center">
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "2", welcome_authkey_path, class: "btn btn-default"%>
-  		</p>
-  			<p class="text-center">
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-	  			<%=link_to "3", "", class: "btn btn-danger"%>
-  		</p>
-  		<p class="text-center">
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-	  			<%=link_to "4", welcome_authkey_path, class: "btn btn-default"%>
-  		</p>
-  		<p>
-  			<br>
-  		<%=link_to "Back", welcome_select_path, class: "btn btn-info btn-lg btn-block"%>
-	  	</p>
-	  </div>
+<div class="container-fluid">	
+	<div class="row">
+		<div class="col-md-10">
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			  	
+			  	
+			  	
+			  </div>
+			</div>
+		</div>
 	</div>
-</div>
 </div>
 
 </body>
