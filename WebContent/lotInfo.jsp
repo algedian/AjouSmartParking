@@ -12,13 +12,15 @@
 	<title>Smart Parking</title>
 </head>
 <body>
-
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-xs-12">
-			<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB4RKax8jdIYM7__cAMShZWDp3B9GZDiiQ&q=${lotLatitude}%2C${lotLongitude}"></iframe>
+<div class="outer">
+<div class="container-fluid" style="position: relative; height: 80%; margin: 2.5% 0 2.5% 0;">
+	<div class="row" style="height: 100%;">
+		<div class="col-xs-12" style="height: 100%;">
+			<iframe width="100%" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyB4RKax8jdIYM7__cAMShZWDp3B9GZDiiQ&q=${lotLatitude}%2C${lotLongitude}"></iframe>
 		</div>
 	</div>
+</div>
+<div class="container-fluid">
 	<div class="row">
 		<div class="col-xs-6">
 		<a href="ParkingLotList" class="btn btn-danger btn-lg btn-block" > Back </a>
@@ -27,6 +29,8 @@
 		<a href="Reservation?lotID=${lotID}" class="btn btn-success btn-lg btn-block" > Next </a>
 		</div>
 	</div>
+</div>
+</div>
 </div>
 </body>
 </html>
