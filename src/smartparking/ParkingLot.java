@@ -8,13 +8,13 @@ public class ParkingLot {
 	private int distance;
 	private int validSpace;
 	
-	public ParkingLot(String latitude, String longitude, int lotID, String name){
+	public ParkingLot(String latitude, String longitude, int lotID, String name, int validSpace){
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.lotID = lotID;
 		this.name = name;
 		distance = 0;
-		setValidSpace(0);
+		setValidSpace(validSpace);
 	}
 	
 	public String getName(){

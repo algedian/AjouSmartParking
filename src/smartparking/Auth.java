@@ -1,6 +1,8 @@
 package smartparking;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,7 +29,19 @@ public class Auth extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+		String pw = request.getParameter("pw");
+		boolean det=false;
+		try {
+			det = DB.checkPW(pw);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(det){
+			response.setStatus(200);
+		}else{
+			response.setStatus(404);
+		}
 	}
 
 	/**

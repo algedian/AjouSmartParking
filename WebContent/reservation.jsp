@@ -15,57 +15,30 @@
 	<title>Smart Parking</title>
 </head>
 <body>
+<div>
 
-<div class="container-fluid">	
-	<div class="row">
-		<div class="col-md-10">
-			<div class="panel panel-default">
-			  <div class="panel-body">
-			  	<%
-			  	int row = 5;
-			  	int col = 4;
-			  	int cnt = 0;
-			  	int max;
-			  	boolean done = false;
-			  	ArrayList<String> spaceList = (ArrayList<String>) request.getAttribute("spaceList");
-				max = spaceList.size();
-			  	//RequestDispatcher rd = request.getRequestDispatcher("/reservation.jsp");
-				
-				for(int i=0 ; i<row ; i++){
-					%>
-					<div class="row">
-					<%
-					if(done){
-						break;
-					}
-					for(int j=0 ; j<col ; j++){
-						if(cnt==max){
-							done = true;
-							break;
-						}
-						cnt++;
-						if((i+j)% 2 == 0){
-							%>
-							<button type="button" class="btn btn-default btn-sm"><%=spaceList.get(cnt) %></button>
-							<%
-						}
-						else{
-							%>
-							<button type="button" class="btn btn-warning btn-sm"><%=spaceList.get(cnt) %></button>
-							<%
-						}
-					}
-					%>
-					</div> 
-					<%
-				}
-			  	
-			  	%>
-			  </div>
-			</div>
+<div class="container-fluid" style="position: relative; height: 50%; margin: 2.5% 0 2.5% 0;">
+	<div class="row" style="height: 100%;">
+		<div class="col-xs-12" style="height: 100%;">
+			<iframe width="100%" src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyB4RKax8jdIYM7__cAMShZWDp3B9GZDiiQ&origin=${latitude}%2C${longitude}&destination=${lotLatitude}%2C${lotLongitude}&mode=driving"></iframe>
 		</div>
 	</div>
 </div>
 
+<div class="container-fluid">
+	<div class="row">
+	<div class="col-xs-12">
+		<h2 class="text-center">${authInfo.authKey}</h2>
+		<h4 class="text-center">${expireTime}<small>±îÁö</small></h4>
+	</div>		
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+		<a href="CancelReservation" class="btn btn-danger btn-lg btn-block" > Cancel </a>
+		</div>
+	</div>
+</div>
+
+</div>
 </body>
 </html>

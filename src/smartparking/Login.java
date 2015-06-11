@@ -32,14 +32,21 @@ public class Login extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		User user = (User)session.getAttribute("user");
-		if(user != null){
-			response.sendRedirect("/Welcome");
-		}
-		
 		String phoneNum = request.getParameter("phoneNum");
 		String latitude = request.getParameter("latitude");
 		String longitude = request.getParameter("longitude");
+		User user = (User)session.getAttribute("user");
+		if(user != null){
+			if(latitude == null || longitude==null){
+				response.sendRedirect("Welcome");
+				return;
+			}else{
+				session.setAttribute("latitude", latitude);
+				session.setAttribute("longitude", longitude);
+				response.sendRedirect("Welcome");
+				return;
+			}
+		}
 		session.setAttribute("latitude", latitude);
 		session.setAttribute("longitude", longitude);
 		
@@ -57,6 +64,7 @@ public class Login extends HttpServlet {
 		}else{
 			session.setAttribute("user", user);
 			response.sendRedirect("Welcome");
+			return;
 		}
 	}
 

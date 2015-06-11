@@ -3,7 +3,6 @@ package smartparking;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,16 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class Welcome
+ * Servlet implementation class CancelReservation
  */
-@WebServlet("/Welcome")
-public class Welcome extends HttpServlet {
+@WebServlet("/CancelReservation")
+public class CancelReservation extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Welcome() {
+    public CancelReservation() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,26 +31,19 @@ public class Welcome extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
-		
-		AuthInfo authInfo = null;
+		User user = (User) session.getAttribute("user");
 		try {
-			authInfo = DB.checkResv(((User)session.getAttribute("user")).getUserID());
+			DB.cancelReservation(user.getUserID());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("fail : check existing resv");
+			System.out.println("fail cancel resv");
 			e.printStackTrace();
 		}
-		if(authInfo != null){
-			session.setAttribute("authInfo", authInfo);
-			response.sendRedirect("Reservation");
-			return ;
-		}
-		if(session.getAttribute("user") == null){
-			response.sendRedirect("Login");
-			return;
-		}
-		RequestDispatcher rd = request.getRequestDispatcher("welcome.jsp");
-		rd.forward(request, response);
+		session.removeAttribute("lotLatitude");
+		session.removeAttribute("lotLatitude");
+		session.removeAttribute("expireTime");
+		session.removeAttribute("authInfo");
+		response.sendRedirect("Login");
 	}
 
 	/**

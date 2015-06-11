@@ -2,11 +2,15 @@ package smartparking;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class DB {
 	public static User getUser(String phoneNum) throws SQLException, IOException {
@@ -65,19 +69,14 @@ public class DB {
 			Statement st = con.createStatement();
 			
 			ResultSet rs = st.executeQuery(
-					"select distinct latitude, longitude, parking_lot.parkingLotID, parking_lot.parkingLotName "
-					+ "from parking_lot,parking_space "
-					+ "where parking_space.parkingLotID=parking_lot.parkingLotID AND parking_space.status='true';");
+					"select latitude, longitude, parkingLotID, parkingLotName, validSpace from parking_lot;");
 			while(rs.next()){
 				latitude = rs.getString(1);
 				longitude = rs.getString(2);
 				lotID = rs.getInt(3);
 				name = rs.getString(4);
-				list.add(new ParkingLot(latitude, longitude, lotID, name));
-			}
-			for(ParkingLot pl : list){
-				rs = st.executeQuery("select count(*) from parking_space where parkingLotID="+pl.getLotID()+" and status='true';");
-				pl.setValidSpace(rs.getInt(1));
+				int validSpace = rs.getInt(5);
+				list.add(new ParkingLot(latitude, longitude, lotID, name, validSpace));
 			}
 			rs.close();
 		}
@@ -97,14 +96,15 @@ public class DB {
 		try {
 			Statement st = con.createStatement();
 			
-			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID, parkingLotName FROM parking_lot "
+			ResultSet rs = st.executeQuery("SELECT latitude, longitude, parkingLotID, parkingLotName,validSpace FROM parking_lot "
 					+ "where parking_lot.parkingLotID='" + lotID + "';");
 			while(rs.next()){
 				latitude = rs.getString(1);
 				longitude = rs.getString(2);
 				tmplotID = rs.getInt(3);
 				name = rs.getString(4);
-				lot = new ParkingLot(latitude, longitude, tmplotID, name);
+				int validSpace = rs.getInt(5);
+				lot = new ParkingLot(latitude, longitude, tmplotID, name,validSpace);
 			}
 			rs.close();
 		}
@@ -114,19 +114,41 @@ public class DB {
 		return lot;
 	}
 	
+	private static String keyGenerator(){
+		String key = "";
+		Double k = (Math.random()*10);
+		for(int i = 0;i<4;i++){
+			key += k.toString();
+			k = (Math.random()*10);
+		}
+		return key;
+	}
 	
-	public static ArrayList<String> getParkingSpace(String lotID) throws SQLException, IOException {
+	public static AuthInfo makeReservation(String lotID, String userID) throws SQLException, IOException{
 		Connection con = getConnection();
-		ArrayList<String> ret = new ArrayList<String>();
-		try {
+		String authKey = null;
+		Timestamp resvTime = null;
+		AuthInfo ret = null;
+		Calendar cal = Calendar.getInstance();
+		try{
 			Statement st = con.createStatement();
-			
-			ResultSet rs = st.executeQuery("SELECT parkingSpaceID FROM parking_space "
-					+ "WHERE parking_space.parkingLotID='" + lotID + "';");			
+			ResultSet rs;
+			ParkingLot lot = getLotInfo(lotID);
+			st.executeUpdate("update parking_lot set validSpace="+(lot.getValidSpace()-1)+" where parkingLotID="+lotID+";");
+			st.executeUpdate("insert into reservation (parkingLotID, userID, expired) value ('"+lotID+"', '"+userID+"', 'false');",Statement.RETURN_GENERATED_KEYS);
+			rs = st.getGeneratedKeys();
+			String reservationID = null;
 			while(rs.next()){
-				ret.add(rs.getString(1));
+				reservationID = rs.getString(1);
 			}
-			rs.close();
+			System.out.println("resvID : "+reservationID);
+			authKey = keyGenerator();
+			st.executeUpdate("insert into authkey (authKey, reservationID) value("+authKey+","+reservationID+");");
+			rs = st.executeQuery("select timestamp from reservation where reservationID="+reservationID+";");
+			while(rs.next()){
+				resvTime = rs.getTimestamp(1, cal);
+			}
+			ret = new AuthInfo(cal,authKey);
 		}
 		finally {
 			con.close();
@@ -134,20 +156,70 @@ public class DB {
 		return ret;
 	}
 	
-	/*
-	public static void addMusicToServer(String userId, String title, String content) throws SQLException, IOException{
+	public static void cancelReservation(String userID) throws SQLException, IOException{
 		Connection con = getConnection();
-		
-		Statement st = con.createStatement();
-		
-		st.executeUpdate("INSERT INTO music VALUES('0','" + userId 
-				+ "', '" + title + "', '" + content + "')");
-		
-		st.close();
-		con.close();
-		
+		try{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select reservationID from reservation where userID='"+userID+"';");
+			String resvID = null;
+			while(rs.next()){
+				resvID = rs.getString(1);
+			}
+			if(resvID!=null){
+				st.executeUpdate("delete from reservation where reservationID="+resvID+";");
+				st.executeUpdate("delete from authkey where reservationID="+resvID+";");
+			}
+		}
+		finally {
+			con.close();
+		}
 	}
-	*/
+	
+	public static AuthInfo checkResv(String userID) throws SQLException, IOException {
+		// TODO Auto-generated method stub
+		Connection con = getConnection();
+		String authKey = null;
+		Timestamp resvTime = null;
+		AuthInfo ret = null;
+		Calendar cal = Calendar.getInstance();
+		try{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select timestamp, authKey from authkey, reservation where userID='"+userID+"';");
+			while(rs.next()){
+				resvTime = rs.getTimestamp(1, cal);
+				authKey = rs.getString(2);
+			}
+			if(authKey!=null){
+				ret = new AuthInfo(cal,authKey);
+			}
+		}
+		finally {
+			con.close();
+		}
+		return ret;
+	}
+	
+
+	public static boolean checkPW(String pw) throws SQLException, IOException {
+		// TODO Auto-generated method stub
+		Connection con = getConnection();
+		boolean ret = false;
+		String resvID = null;
+		try{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select reservationID from authkey where authKey='"+pw+"';");
+			while(rs.next()){
+				resvID = rs.getString(1);
+			}
+			if(resvID!=null){
+				ret=true;
+			}
+		}
+		finally {
+			con.close();
+		}
+		return ret;
+	}
 	
 	public static Connection getConnection() throws SQLException, IOException {
 		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";
@@ -161,6 +233,67 @@ public class DB {
 		}
 		return DriverManager.getConnection(url, username, password);
 	}
+
+	public static void updateMote(String moteID, boolean status) throws SQLException, IOException {
+		// TODO Auto-generated method stub
+		Connection con = getConnection();
+		String res = null;
+		boolean exStatus = false;
+		try{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select status from parking_space where parkingSpaceID='"+moteID+"';");
+			while(rs.next()){
+				res = rs.getString(1);
+			}
+			if(res != null){
+				exStatus = res.equals("true");
+				if(exStatus && !status){
+					st.executeUpdate("update parking_space set status='false' where parkingSpaceID='"+moteID+"'");
+					rs = st.executeQuery("select reservationID from reservation,parking_space where parking_space.parkingSpaceID='"+moteID+"' and parking_space.parkingLotID=reservation.parkingLotID;");
+					String resvID = null;
+					if(rs.next()){
+						resvID = rs.getString(1);
+					}
+					if(resvID == null) return;
+					st.executeUpdate("insert into occupy(enterTime,userID)select (timestamp,userID) from reservation where reservationID="+resvID+"';",Statement.RETURN_GENERATED_KEYS);
+					rs = st.getGeneratedKeys();
+					String id=null;
+					if(rs.next()){
+						id = rs.getString(1);
+					}
+					if(id==null) System.out.println("id=null");
+					st.executeUpdate("update occupy set parkingSpaceID ='"+moteID+"' where _ID='"+id+"';");
+					st.executeUpdate("delete from reservation where reservationID="+resvID+";");
+					st.executeUpdate("delete from authkey where reservationID="+resvID+";");
+				}else if(!exStatus && status){
+					st.executeUpdate("update parking_space set status='true' where parkingSpaceID='"+moteID+"'");
+					
+				}
+			}
+		}
+		finally {
+			con.close();
+		}
+	}
+
+	public static ParkingLot getLotLoc(String authKey) throws SQLException, IOException {
+		// TODO Auto-generated method stub
+		Connection con = getConnection();
+		try{
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("select latitude, longitude from parking_lot, authkey,reservation where authkey.authKey='"+authKey+"' and authkey.reservationID=reservation.reservationID and reservation.parkingLotID=parking_lot.parkingLotID");
+			while(rs.next()){
+				return new ParkingLot(rs.getString(1),rs.getString(2),0	,"",0);
+			}
+		}
+		finally {
+			con.close();
+		}
+		return null;
+	}
+
+
+	
 	
 	
 }
