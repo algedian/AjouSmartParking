@@ -152,7 +152,7 @@ public class DB {
 	public static Connection getConnection() throws SQLException, IOException {
 		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";
 		String username = "root";
-		String password = "asdf1234";
+		String password = "webclass";
 		 try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
