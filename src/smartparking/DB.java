@@ -248,8 +248,25 @@ public class DB {
 			if(res != null){
 				exStatus = res.equals("true");
 				if(exStatus && !status){
-					st.executeQuery("");
+					st.executeUpdate("update parking_space set status='false' where parkingSpaceID='"+moteID+"'");
+					rs = st.executeQuery("select reservationID from reservation,parking_space where parking_space.parkingSpaceID='"+moteID+"' and parking_space.parkingLotID=reservation.parkingLotID;");
+					String resvID = null;
+					if(rs.next()){
+						resvID = rs.getString(1);
+					}
+					if(resvID == null) return;
+					st.executeUpdate("insert into occupy(enterTime,userID)select (timestamp,userID) from reservation where reservationID="+resvID+"';",Statement.RETURN_GENERATED_KEYS);
+					rs = st.getGeneratedKeys();
+					String id=null;
+					if(rs.next()){
+						id = rs.getString(1);
+					}
+					if(id==null) System.out.println("id=null");
+					st.executeUpdate("update occupy set parkingSpaceID ='"+moteID+"' where _ID='"+id+"';");
+					st.executeUpdate("delete from reservation where reservationID="+resvID+";");
+					st.executeUpdate("delete from authkey where reservationID="+resvID+";");
 				}else if(!exStatus && status){
+					st.executeUpdate("update parking_space set status='true' where parkingSpaceID='"+moteID+"'");
 					
 				}
 			}
