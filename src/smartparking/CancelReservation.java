@@ -39,8 +39,8 @@ public class CancelReservation extends HttpServlet {
 			System.out.println("fail cancel resv");
 			e.printStackTrace();
 		}
-		session.removeAttribute("lotLatitude");
-		session.removeAttribute("lotLatitude");
+		session.removeAttribute("lotLLatitude");
+		session.removeAttribute("lotLongitude");
 		session.removeAttribute("expireTime");
 		session.removeAttribute("authInfo");
 		response.sendRedirect("Login");
