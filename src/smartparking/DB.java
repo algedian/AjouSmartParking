@@ -160,11 +160,20 @@ public class DB {
 		Connection con = getConnection();
 		try{
 			Statement st = con.createStatement();
-			ResultSet rs = st.executeQuery("select reservationID from reservation where userID='"+userID+"';");
+			ResultSet rs = st.executeQuery("select reservationID,parkingLotID from reservation where userID='"+userID+"';");
 			String resvID = null;
+			String lotID = null;
 			while(rs.next()){
 				resvID = rs.getString(1);
+				lotID = rs.getString(2);
 			}
+			int tmp=0;
+			rs = st.executeQuery("select validSpace from parking_lot where parkingLotID='"+lotID+"';");
+			while(rs.next()){
+				tmp = rs.getInt(1); 
+			}
+			tmp++;
+			st.executeUpdate("update parking_lot set validSpace="+tmp+" where parkingLotID='"+lotID+"';");
 			if(resvID!=null){
 				st.executeUpdate("delete from reservation where reservationID="+resvID+";");
 				st.executeUpdate("delete from authkey where reservationID="+resvID+";");
