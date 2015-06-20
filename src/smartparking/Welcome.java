@@ -36,6 +36,7 @@ public class Welcome extends HttpServlet {
 		AuthInfo authInfo = null;
 		try {
 			authInfo = DB.checkResv(((User)session.getAttribute("user")).getUserID());
+			// check user's reservation;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("fail : check existing resv");
@@ -45,10 +46,6 @@ public class Welcome extends HttpServlet {
 			session.setAttribute("authInfo", authInfo);
 			response.sendRedirect("Reservation");
 			return ;
-		}
-		if(session.getAttribute("user") == null){
-			response.sendRedirect("Login");
-			return;
 		}
 		RequestDispatcher rd = request.getRequestDispatcher("welcome.jsp");
 		rd.forward(request, response);

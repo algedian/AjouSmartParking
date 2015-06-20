@@ -11,8 +11,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class DB {
+	private static int keyMaker = 0;
+
 	public static User getUser(String phoneNum) throws SQLException, IOException {
 		Connection con = getConnection();
 		User user = null;
@@ -69,7 +72,7 @@ public class DB {
 			Statement st = con.createStatement();
 			
 			ResultSet rs = st.executeQuery(
-					"select latitude, longitude, parkingLotID, parkingLotName, validSpace from parking_lot;");
+					"select latitude, longitude, parkingLotID, parkingLotName, validSpace from parking_lot where validSpace>0;");
 			while(rs.next()){
 				latitude = rs.getString(1);
 				longitude = rs.getString(2);
@@ -114,16 +117,6 @@ public class DB {
 		return lot;
 	}
 	
-	private static String keyGenerator(){
-		String key = "";
-		Double k = (Math.random()*10);
-		for(int i = 0;i<4;i++){
-			key += k.toString();
-			k = (Math.random()*10);
-		}
-		return key;
-	}
-	
 	public static AuthInfo makeReservation(String lotID, String userID) throws SQLException, IOException{
 		Connection con = getConnection();
 		String authKey = null;
@@ -135,20 +128,22 @@ public class DB {
 			ResultSet rs;
 			ParkingLot lot = getLotInfo(lotID);
 			st.executeUpdate("update parking_lot set validSpace="+(lot.getValidSpace()-1)+" where parkingLotID="+lotID+";");
-			st.executeUpdate("insert into reservation (parkingLotID, userID, expired) value ('"+lotID+"', '"+userID+"', 'false');",Statement.RETURN_GENERATED_KEYS);
+			st.executeUpdate("insert into reservation (parkingLotID, userID, valid) value ('"+lotID+"', '"+userID+"','false');",Statement.RETURN_GENERATED_KEYS);
 			rs = st.getGeneratedKeys();
 			String reservationID = null;
 			while(rs.next()){
 				reservationID = rs.getString(1);
 			}
 			System.out.println("resvID : "+reservationID);
-			authKey = keyGenerator();
+			authKey =  String.format("%04d", (keyMaker++)%10000);
 			st.executeUpdate("insert into authkey (authKey, reservationID) value("+authKey+","+reservationID+");");
 			rs = st.executeQuery("select timestamp from reservation where reservationID="+reservationID+";");
 			while(rs.next()){
 				resvTime = rs.getTimestamp(1, cal);
 			}
 			ret = new AuthInfo(cal,authKey);
+			ret.cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+			ret.cal.add(Calendar.MINUTE, 30);
 		}
 		finally {
 			con.close();
@@ -167,14 +162,14 @@ public class DB {
 				resvID = rs.getString(1);
 				lotID = rs.getString(2);
 			}
-			int tmp=0;
-			rs = st.executeQuery("select validSpace from parking_lot where parkingLotID='"+lotID+"';");
-			while(rs.next()){
-				tmp = rs.getInt(1); 
-			}
-			tmp++;
-			st.executeUpdate("update parking_lot set validSpace="+tmp+" where parkingLotID='"+lotID+"';");
 			if(resvID!=null){
+				int tmp=0;
+				rs = st.executeQuery("select validSpace from parking_lot where parkingLotID='"+lotID+"';");
+				while(rs.next()){
+					tmp = rs.getInt(1); 
+				}
+				tmp++;
+				st.executeUpdate("update parking_lot set validSpace="+tmp+" where parkingLotID='"+lotID+"';");
 				st.executeUpdate("delete from reservation where reservationID="+resvID+";");
 				st.executeUpdate("delete from authkey where reservationID="+resvID+";");
 			}
@@ -187,7 +182,7 @@ public class DB {
 	public static AuthInfo checkResv(String userID) throws SQLException, IOException {
 		// TODO Auto-generated method stub
 		Connection con = getConnection();
-		String authKey = null;
+		int authKey = -1;
 		Timestamp resvTime = null;
 		AuthInfo ret = null;
 		Calendar cal = Calendar.getInstance();
@@ -196,10 +191,12 @@ public class DB {
 			ResultSet rs = st.executeQuery("select timestamp, authKey from authkey, reservation where userID='"+userID+"';");
 			while(rs.next()){
 				resvTime = rs.getTimestamp(1, cal);
-				authKey = rs.getString(2);
+				authKey = rs.getInt(2);
 			}
-			if(authKey!=null){
-				ret = new AuthInfo(cal,authKey);
+			if(authKey!=-1){
+				ret = new AuthInfo(cal,String.format("%04d", authKey));
+				ret.cal.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+				ret.cal.add(Calendar.MINUTE, 30);
 			}
 		}
 		finally {
@@ -222,6 +219,7 @@ public class DB {
 			}
 			if(resvID!=null){
 				ret=true;
+				st.executeUpdate("update reservation set valid='true' where reservationID='"+resvID+"';");
 			}
 		}
 		finally {
@@ -233,7 +231,7 @@ public class DB {
 	public static Connection getConnection() throws SQLException, IOException {
 		String url = "jdbc:mysql://localhost:3306/smartparking?useUnicode=true&characterEncoding=UTF-8";
 		String username = "root";
-		String password = "webclass";
+		String password = "asdf1234";
 		 try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -258,14 +256,19 @@ public class DB {
 				exStatus = res.equals("true");
 				if(exStatus && !status){
 					st.executeUpdate("update parking_space set status='false' where parkingSpaceID='"+moteID+"'");
-					rs = st.executeQuery("select reservationID from reservation,parking_space where parking_space.parkingSpaceID='"+moteID+"' and parking_space.parkingLotID=reservation.parkingLotID;");
+					
+					rs = st.executeQuery("select reservationID from reservation,parking_space where reservation.valid='true' and parking_space.parkingSpaceID='"+moteID+"' and parking_space.parkingLotID=reservation.parkingLotID;");
 					String resvID = null;
-					if(rs.next()){
-						resvID = rs.getString(1);
-					}
+					if(rs.next()) resvID = rs.getString(1);
 					if(resvID == null) return;
-					st.executeUpdate("insert into occupy(enterTime,userID)select (timestamp,userID) from reservation where reservationID="+resvID+"';",Statement.RETURN_GENERATED_KEYS);
-					rs = st.getGeneratedKeys();
+					rs = st.executeQuery("select userID from reservation where reservationID='"+resvID+"';");
+					String userID = null;
+					if(rs.next()) userID = rs.getString(1);
+					System.out.println("updateMote resvID userID");
+					System.out.println(resvID);
+					System.out.println(userID);
+					st.executeUpdate("insert into occupy (userID) value ('"+userID+"');");
+					rs = st.executeQuery("select _ID from occupy where userID='"+userID+"';");
 					String id=null;
 					if(rs.next()){
 						id = rs.getString(1);
@@ -275,8 +278,29 @@ public class DB {
 					st.executeUpdate("delete from reservation where reservationID="+resvID+";");
 					st.executeUpdate("delete from authkey where reservationID="+resvID+";");
 				}else if(!exStatus && status){
-					st.executeUpdate("update parking_space set status='true' where parkingSpaceID='"+moteID+"'");
-					
+					st.executeUpdate("update parking_space set status='true' where parkingSpaceID='"+moteID+"';");
+					//
+					String chker=null;
+					rs = st.executeQuery("select _ID from occupy where parkingSpaceID='"+moteID+"';");
+					if(rs.next()) chker = rs.getString(1);
+
+					if(chker!=null){
+						// recover parking lot valid space counter
+						rs = st.executeQuery("select parkingLotID from parking_space where parkingSpaceID='"+moteID+"';");
+						String lotID = null;
+						if(rs.next()) lotID = rs.getString(1);
+						int tmp=0;
+						rs = st.executeQuery("select validSpace from parking_lot where parkingLotID='"+lotID+"';");
+						while(rs.next()){
+							tmp = rs.getInt(1); 
+						}
+						tmp++;
+						st.executeUpdate("update parking_lot set validSpace="+tmp+" where parkingLotID='"+lotID+"';");
+						// compute time user used
+						// delete occupy
+						st.executeUpdate("delete from occupy where parkingSpaceID='"+moteID+"';");
+					}
+					//
 				}
 			}
 		}

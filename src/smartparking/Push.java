@@ -36,6 +36,8 @@ public class Push extends HttpServlet {
 		if(light < 10) status = false;
 		else status =true;
 		//
+		System.out.println("id = "+moteID);
+		
 		try {
 			DB.updateMote(moteID, status);
 		} catch (SQLException e) {

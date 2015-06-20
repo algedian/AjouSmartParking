@@ -34,7 +34,7 @@ public class Reservation extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String lotID = request.getParameter("lotID");
-		String userID = (String) request.getSession().getAttribute("userID");
+		String userID = ((User)request.getSession().getAttribute("user")).getUserID();
 		HttpSession session = request.getSession();
 		RequestDispatcher rd = request.getRequestDispatcher("/reservation.jsp");
 		AuthInfo authInfo=(AuthInfo) session.getAttribute("authInfo");
@@ -57,7 +57,6 @@ public class Reservation extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		authInfo.cal.add(Calendar.MINUTE, 30);
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		sdf.setCalendar(authInfo.cal);
 		session.setAttribute("expireTime", sdf.format(authInfo.cal.getTime()));

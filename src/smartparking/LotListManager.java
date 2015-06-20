@@ -35,7 +35,7 @@ public class LotListManager {
 			ret = DB.getParkingLots();
 		} catch (SQLException | IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("cannot road parkint lot list");
+			System.out.println("cannot load parkint lot list");
 			e.printStackTrace();
 		}
 		for(ParkingLot p : ret){
