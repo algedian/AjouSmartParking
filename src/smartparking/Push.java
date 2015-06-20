@@ -29,7 +29,7 @@ public class Push extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String moteID = request.getParameter("moteID");
+		String moteID = request.getParameter("id");
 		int light = Integer.parseInt(request.getParameter("light"));
 		boolean status = false;
 		//
